@@ -1,0 +1,2679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Millionaire – Pass & Play</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #0f172a;
+      --card-soft: #020617;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.15);
+      --accent-strong: rgba(34, 197, 94, 0.25);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --danger-soft: rgba(248, 113, 113, 0.15);
+      --border-subtle: #111827;
+      --pill-bg: rgba(15, 23, 42, 0.8);
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 20px 40px rgba(0,0,0,0.5);
+      --shadow-chip: 0 10px 25px rgba(0,0,0,0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px 40px;
+      background: radial-gradient(circle at top left, #1f2937, #020617 55%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1120px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header h1 span.logo-coin {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #bbf7d0, #16a34a);
+      box-shadow: 0 8px 22px rgba(16,185,129,0.6);
+      color: #052e16;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    #stepIndicator {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.15);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, var(--card), var(--card-soft));
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(15,23,42,0.85);
+      padding: 16px 18px 18px;
+      margin-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--pill-bg);
+      border: 1px solid rgba(148,163,184,0.25);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .section-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .field-row input[type="text"] {
+      flex: 1;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      background: rgba(15,23,42,0.9);
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.8);
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+
+    textarea {
+      border-radius: 10px;
+      min-height: 48px;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.35);
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .ghost-btn,
+    .danger-btn {
+      border-radius: 999px;
+      padding: 7px 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #022c22;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(16,185,129,0.55);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.4;
+      box-shadow: none;
+      cursor: default;
+    }
+
+    .secondary-btn {
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      border: 1px solid rgba(148,163,184,0.4);
+    }
+
+    .ghost-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed rgba(75,85,99,0.8);
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #f97373, #ef4444);
+      color: #450a0a;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .player-chip {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      box-shadow: var(--shadow-chip);
+    }
+
+    .player-chip .remove {
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .player-chip .remove:hover {
+      color: #fca5a5;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .toggle input[type="checkbox"] {
+      accent-color: #22c55e;
+      width: 16px;
+      height: 16px;
+    }
+
+    #globalStatus {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .question {
+      border-radius: 12px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(31,41,55,0.9);
+      padding: 8px 10px 10px;
+      margin-bottom: 6px;
+    }
+    .question-label {
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+    }
+
+    .choice-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .choice-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,0.8);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      font-size: 0.78rem;
+      padding: 4px 9px;
+      cursor: pointer;
+    }
+
+    .choice-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: #bbf7d0;
+    }
+
+    #identityGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .identity-card {
+      border-radius: 14px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .identity-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      border-color: rgba(148,163,184,0.6);
+    }
+
+    .identity-card.revealed {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.45), 0 14px 32px rgba(0,0,0,0.7);
+    }
+
+    .identity-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .identity-role {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .role-millionaire {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .role-hunter {
+      color: #93c5fd;
+      font-weight: 500;
+    }
+
+    .identity-clues {
+      margin-top: 6px;
+      max-height: 180px;
+      overflow: auto;
+      font-size: 0.75rem;
+      border-top: 1px dashed rgba(55,65,81,0.9);
+      padding-top: 6px;
+    }
+
+    .clue-item + .clue-item {
+      margin-top: 4px;
+    }
+
+    .clue-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .clue-hidden-text {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    .clue-visible {
+      font-size: 0.82rem;
+      color: #e5e7eb;
+    }
+
+    .clue-box {
+      border-radius: 10px;
+      border: 1px dashed rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.9);
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+
+    .clue-box.interactive {
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      padding: 4px 6px;
+      text-align: left;
+    }
+
+    th {
+      border-bottom: 1px solid rgba(55,65,81,0.9);
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(15,23,42,0.7);
+    }
+
+    .badge-active,
+    .badge-eliminated {
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 0.7rem;
+    }
+
+    .badge-active {
+      background: var(--accent-soft);
+      color: #bbf7d0;
+    }
+
+    .badge-eliminated {
+      background: rgba(148,163,184,0.15);
+      color: #9ca3af;
+    }
+
+    .winner-highlight {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    #currentVoterPanel {
+      border-radius: 12px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.9);
+      padding: 10px 12px;
+      margin-top: 6px;
+    }
+
+    #currentVoterName {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .reveal-log {
+      border-radius: 10px;
+      border: 1px dashed rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      max-height: 160px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+
+    .reveal-log span.vote-line {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .reveal-log span.last-line {
+      font-weight: 600;
+      color: #facc15;
+    }
+
+    .card-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .winner-box {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.5), 0 16px 40px rgba(22,163,74,0.7);
+      background: radial-gradient(circle at top left, #064e3b, #020617);
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-10%) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(540deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1><span class="logo-coin">$</span> The Millionaire</h1>
+        <p class="subtitle">Pass &amp; play deduction game · secret millionaire, public chaos.</p>
+      </div>
+      <div id="stepIndicator">Step 1 · Add players</div>
+    </header>
+
+    <div class="layout">
+      <div class="section-grid">
+        <!-- PLAYER SETUP -->
+        <section id="playerSetup" class="card">
+          <div class="card-header">
+            <h2>Players &amp; setup</h2>
+          </div>
+          <div class="field-row">
+            <input type="text" id="playerNameInput" placeholder="Add player name…">
+            <button id="addPlayerBtn" class="secondary-btn">Add</button>
+          </div>
+          <div class="helper-text">Minimum 2 players. You can add more, then lock in and move to questionnaires.</div>
+          <div style="margin-top:8px;">
+            <div class="helper-text">Players:</div>
+            <div id="playersList"></div>
+          </div>
+
+          <div class="btn-row" style="margin-top:10px;">
+            <button id="startQuestionsBtn" class="primary-btn" disabled>
+              Start questionnaires
+            </button>
+            <button id="assignRolesBtn" class="secondary-btn" disabled>
+              Assign roles
+            </button>
+          </div>
+
+          <div style="margin-top:10px;">
+            <div class="helper-text" style="margin-bottom:4px;">Game options (apply when you press “Start game”):</div>
+            <label class="toggle">
+              <input type="checkbox" id="firstPlacePowerToggle">
+              <span>Enable 1st Place Bonus System (clue / immunity / extra vote)</span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="eliminationModeToggle" checked>
+              <span>Eliminated players stay in minigames &amp; voting</span>
+            </label>
+          </div>
+
+          <div class="btn-row" style="margin-top:10px;">
+            <button id="startGameBtn" class="primary-btn" disabled>
+              Start game
+            </button>
+            <button id="samePlayersBtn" class="secondary-btn">New game · same players</button>
+            <button id="resetGameBtn" class="ghost-btn danger-btn">Reset everything</button>
+          </div>
+
+          <div id="globalStatus"></div>
+        </section>
+
+        <!-- QUESTIONNAIRE -->
+        <section id="questionnaireSection" class="card" style="display:none;">
+          <div class="card-header">
+            <h2>Secret questionnaire</h2>
+          </div>
+          <p id="questionnaireSubtitle" class="helper-text"></p>
+          <p id="questionnaireStatus" class="helper-text"></p>
+          <div id="questionsContainer" style="margin-top:6px; max-height:360px; overflow:auto;"></div>
+          <div class="btn-row" style="margin-top:10px;">
+            <button id="autofillBtn" class="secondary-btn">Autofill (for testing)</button>
+            <span style="flex:1;"></span>
+            <button id="backToPlayersBtn" class="ghost-btn">Back to players</button>
+            <button id="saveAnswersBtn" class="primary-btn">Save &amp; next</button>
+          </div>
+        </section>
+
+        <!-- IDENTITIES -->
+        <section id="identitySection" class="card" style="display:none;">
+          <div class="card-header">
+            <h2>Secret identities</h2>
+          </div>
+          <p class="helper-text">
+            Pass the device. Each player taps their own card to reveal their role and questionnaire answers, then taps again to hide.
+          </p>
+          <div id="identityGrid" style="margin-top:10px;"></div>
+        </section>
+
+        <!-- ROUNDS -->
+        <section id="roundSection" class="card" style="display:none;">
+          <div class="card-header">
+            <div>
+              <div id="roundPill" class="pill">Round 1</div>
+              <h2 id="roundTitle">Round 1 · Minigame &amp; clues</h2>
+            </div>
+          </div>
+
+          <div class="helper-text">
+            Enter the results of the round’s minigame. Only 1st–3rd matter for points and clue access.
+          </div>
+
+          <div class="field-row" style="margin-top:6px;">
+            <label style="font-size:0.8rem; width:60px;">1st</label>
+            <select id="firstPlaceSelect"></select>
+          </div>
+          <div class="field-row">
+            <label style="font-size:0.8rem; width:60px;">2nd</label>
+            <select id="secondPlaceSelect"></select>
+          </div>
+          <div class="field-row">
+            <label style="font-size:0.8rem; width:60px;">3rd</label>
+            <select id="thirdPlaceSelect"></select>
+          </div>
+
+          <div class="btn-row" style="margin-top:8px;">
+            <button id="lockMinigameBtn" class="primary-btn">Lock minigame &amp; reveal clues</button>
+          </div>
+          <p id="minigameStatus" class="helper-text" style="margin-top:6px;"></p>
+
+          <div style="margin-top:10px;">
+            <div class="helper-text" style="margin-bottom:4px;">Clue board (about the current Millionaire):</div>
+            <div class="clue-box">
+              <strong>Public clue (everyone sees):</strong><br>
+              <span id="publicClueText" class="clue-visible">Locked until minigame is set.</span>
+            </div>
+
+            <div id="sharedHiddenClueBlock" class="clue-box interactive">
+              <strong>Shared hidden clue (2nd &amp; 3rd can peek):</strong><br>
+              <span id="sharedHiddenClueText" class="clue-hidden-text">
+                Hidden. Only 1st/2nd/3rd from the minigame should tap to peek.
+              </span>
+            </div>
+
+            <div id="soloHiddenClueBlock" class="clue-box interactive">
+              <strong>1st place solo hidden clue:</strong><br>
+              <span id="soloHiddenClueText" class="clue-hidden-text">
+                Hidden. Only the 1st place player should tap to peek.
+              </span>
+            </div>
+
+            <div id="firstPlacePowerBlock" class="clue-box" style="margin-top:8px; display:none;">
+              <strong>1st place bonus – choose ONE:</strong>
+              <div id="firstPlacePowerChoices" class="choice-group" style="margin-top:6px;">
+                <button type="button" class="choice-btn" data-power="clue">Extra hidden clue</button>
+                <button type="button" class="choice-btn" data-power="immunity">Immunity for this hunt</button>
+                <button type="button" class="choice-btn" data-power="extraVote">Extra vote (initial vote only)</button>
+              </div>
+              <div class="helper-text" style="margin-top:4px;">
+                Once you tap your choice, the options disappear so others can’t see what you picked.
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top:10px;">
+            <button id="proceedToVotingBtn" class="primary-btn" disabled>Proceed to the hunt</button>
+          </div>
+        </section>
+
+        <!-- VOTING -->
+        <section id="voteSection" class="card" style="display:none;">
+          <div class="card-header">
+            <div>
+              <div id="voteRoundPill" class="pill">Round 1</div>
+              <h2 id="voteSubtitle">The Hunt</h2>
+            </div>
+          </div>
+          <p id="voteStatusText" class="helper-text"></p>
+
+          <div id="currentVoterPanel" style="display:none;">
+            <div id="currentVoterName"></div>
+            <div id="currentVoterStatus" class="helper-text"></div>
+
+            <div style="margin-top:6px;">
+              <label class="helper-text">Primary vote (suspected Millionaire):</label>
+              <select id="primaryVoteSelect"></select>
+            </div>
+
+            <div id="extraVoteBlock" style="margin-top:6px; display:none;">
+              <label class="helper-text">Extra vote (1st place bonus):</label>
+              <select id="secondaryVoteSelect"></select>
+              <div class="helper-text">You may pick a different person or the same one.</div>
+            </div>
+
+            <button id="submitVoteBtn" class="primary-btn" style="margin-top:10px;">Submit vote &amp; pass device</button>
+          </div>
+
+          <p id="voteHint" class="helper-text" style="margin-top:10px;"></p>
+
+          <div id="revealVotesArea" style="margin-top:10px; display:none;">
+            <div class="helper-text" style="margin-bottom:4px;">Votes will now be revealed one by one:</div>
+            <div id="voteRevealLog" class="reveal-log"></div>
+            <button id="revealNextVoteBtn" class="secondary-btn" style="margin-top:8px;">Reveal next vote</button>
+          </div>
+        </section>
+
+        <!-- FINALE -->
+        <section id="finaleSection" class="card" style="display:none;">
+          <div class="card-header">
+            <h2>Finale · Blind box swap</h2>
+          </div>
+          <p id="finaleSubtitle" class="helper-text"></p>
+          <p id="finalistsList" class="helper-text"></p>
+
+          <div>
+            <div class="helper-text" style="margin-bottom:4px;">Final minigame (no points, just order of power):</div>
+            <div class="field-row">
+              <label style="font-size:0.8rem; width:60px;">1st</label>
+              <select id="finalFirstSelect"></select>
+            </div>
+            <div class="field-row">
+              <label style="font-size:0.8rem; width:60px;">2nd</label>
+              <select id="finalSecondSelect"></select>
+            </div>
+            <div class="field-row">
+              <label style="font-size:0.8rem; width:60px;">3rd</label>
+              <select id="finalThirdSelect"></select>
+            </div>
+            <div class="btn-row" style="margin-top:8px;">
+              <button id="lockFinaleMinigameBtn" class="primary-btn">Lock finale order</button>
+            </div>
+          </div>
+
+          <p id="finaleStatus" class="helper-text" style="margin-top:8px;"></p>
+
+          <div id="boxesContainer" style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px;"></div>
+
+          <div class="btn-row" style="margin-top:10px;">
+            <button id="skipSwapBtn" class="secondary-btn" disabled>Mark swap complete (no change)</button>
+            <button id="revealBoxesBtn" class="primary-btn" disabled>Reveal boxes &amp; winner</button>
+          </div>
+
+          <div class="btn-row" id="endResetRow" style="margin-top:10px; display:none;">
+            <button id="endSamePlayersBtn" class="secondary-btn">New game · same players</button>
+            <button id="endResetBtn" class="ghost-btn danger-btn">Reset everything</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: RULES + SCOREBOARD + VOTE HISTORY -->
+      <div class="section-grid">
+        <!-- RULES -->
+        <section id="rulesSection" class="card">
+          <div class="card-header">
+            <h2>Rules</h2>
+            <button id="toggleRulesBtn" class="secondary-btn">Show rules</button>
+          </div>
+          <div id="rulesContent" class="helper-text" style="display:none; margin-top:4px; max-height:360px; overflow:auto;">
+            <p><strong>Goal</strong><br>
+              One hidden Millionaire is trying to survive each round. Everyone else (Hunters) tries to identify and “hunt” the Millionaire. You also gain points from minigames and correct guesses.</p>
+
+            <p><strong>Setup</strong></p>
+            <ul>
+              <li>Add all player names.</li>
+              <li>Each player privately answers the 30-question questionnaire (their personal “clue profile”).</li>
+              <li>Roles are assigned: exactly one <strong>Millionaire</strong>, everyone else <strong>Hunters</strong>.</li>
+              <li>Players can tap their card in <em>Secret identities</em> to see their role and own answers.</li>
+            </ul>
+
+            <p><strong>Game options (before starting)</strong></p>
+            <ul>
+              <li><strong>1st Place Bonus System</strong> (toggle): if ON, the 1st place minigame finisher each round can choose ONE:
+                <ul>
+                  <li><em>Extra hidden clue</em> (only they can see), OR</li>
+                  <li><em>Immunity</em> from that hunt’s elimination, OR</li>
+                  <li><em>Extra vote</em> in the initial hunt vote (only for that first vote).</li>
+                </ul>
+              </li>
+              <li><strong>Eliminated players stay in minigames &amp; voting</strong> (toggle):
+                <ul>
+                  <li>If ON (default): eliminated players still join minigames and vote for points, but their votes never affect who is eliminated and are not shown in the reveal.</li>
+                  <li>If OFF: eliminated players are fully out (no minigames, no votes).</li>
+                </ul>
+              </li>
+            </ul>
+
+            <p><strong>Round structure (until only 3 players remain)</strong></p>
+            <ol>
+              <li><strong>Minigame</strong>
+                <ul>
+                  <liRun your chosen minigame offline, then enter 1st, 2nd, 3rd (they must all be different).</li>
+                  <li>Minigame points: 1st = +3, 2nd = +2, 3rd = +1.</li>
+                  <li>Minigame scores are always visible on the scoreboard.</li>
+                </ul>
+              </li>
+              <li><strong>Clues about the Millionaire</strong>
+                <ul>
+                  <li>Three new clues are randomly drawn from the current Millionaire’s questionnaire with no repeats across the whole game for that player.</li>
+                  <li><em>Public clue</em>: visible to everyone.</li>
+                  <li><em>Shared hidden clue</em>: 2nd and 3rd (and 1st) can tap to reveal/hide.</li>
+                  <li><em>Solo hidden clue</em> for 1st:
+                    <ul>
+                      <li>If the 1st Place Bonus System is OFF: 1st can just tap to view/hide.</li>
+                      <li>If ON: 1st must first choose their bonus. Only if they choose <em>Extra hidden clue</em> does this clue become usable. If they choose <em>Immunity</em> or <em>Extra vote</em>, the extra clue stays locked.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><strong>1st Place Bonus (optional setting)</strong>
+                <ul>
+                  <li>Only if enabled and 1st place is not eliminated.</li>
+                  <li>1st secretly chooses one of:
+                    <ul>
+                      <li><strong>Extra hidden clue</strong>: unlocks the 1st-only hidden clue.</li>
+                      <li><strong>Immunity (this hunt only)</strong>:
+                        <ul>
+                          <li>Revealed only if that player would have been eliminated.</li>
+                          <li>Votes against them are announced as “does not count”.</li>
+                          <li>If ALL valid votes are on the immune player, either a revote or no elimination occurs depending on the situation.</li>
+                        </ul>
+                      </li>
+                      <li><strong>Extra vote (initial hunt only)</strong>:
+                        <ul>
+                          <li>They get 2 votes in the <em>initial</em> hunt vote and can target one or two different players.</li>
+                          <li>On a tie revote, everyone (including them) has only 1 vote.</li>
+                          <li>Guess-point credit is based on their <em>primary</em> vote only.</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li><strong>The Hunt – private voting</strong>
+                <ul>
+                  <li>Voting is <strong>never</strong> allowed for yourself.</li>
+                  <li>If eliminated players are allowed in:
+                    <ul>
+                      <li>Eliminated players vote <strong>first</strong> (one by one).</li>
+                      <li><strong>Their votes do not affect who is hunted, but can still earn guess points</strong> if they name the Millionaire.</li>
+                    </ul>
+                  </li>
+                  <li>Active players then vote, one at a time, passing the device in secret.</li>
+                  <li>Only votes from active players count toward who is eliminated.</li>
+                </ul>
+              </li>
+              <li><strong>Vote reveal &amp; elimination</strong>
+                <ul>
+                  <li>If someone has active immunity and would be eliminated:
+                    <ul>
+                      <li>The immunity is announced: votes on them “do not count”.</li>
+                      <li>Next-highest vote-getter is eliminated instead.</li>
+                    </ul>
+                  </li>
+                  <li>If there’s a tie for most votes:
+                    <ul>
+                      <li><strong>Initial vote:</strong> revote only among tied players.</li>
+                      <li><strong>Revote tie again:</strong> tied players become safe and a random other active player is eliminated (if any). If no one else is available, no elimination.</li>
+                    </ul>
+                  </li>
+                  <li>All correct guesses for the Millionaire (from the initial vote, primary votes only) give +1 guess point, even if the voter is eliminated.</li>
+                  <li>If the hunted player is <strong>not</strong> the Millionaire, the Millionaire gets +1 survival point for that round.</li>
+                </ul>
+              </li>
+              <li><strong>Millionaire elimination &amp; reassignment</strong>
+                <ul>
+                  <li>If the hunted player <strong>is</strong> the Millionaire:
+                    <ul>
+                      <li>Their role is revealed and they are eliminated.</li>
+                      <li>The Million is randomly reassigned to one of the remaining active players.</li>
+                      <li>Everyone is prompted to re-check roles in the <em>Secret identities</em> section before the next round.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ol>
+
+            <p><strong>Finale (when 3 or fewer players remain)</strong></p>
+            <ul>
+              <li>Finalists re-check roles via identity cards.</li>
+              <li>Run a final minigame to decide 1st, 2nd, 3rd – <strong>no points are awarded</strong> here.</li>
+              <li>One hidden box contains the Million (assigned to the current Millionaire).</li>
+              <li>2nd place secretly swaps any two boxes (or chooses not to swap).</li>
+              <li>1st place then secretly swaps any two boxes (or chooses not to swap).</li>
+              <li>When everyone is ready, you reveal all boxes at once; whoever has the Million wins. Confetti flies.</li>
+            </ul>
+
+            <p><strong>Scoring &amp; end of game</strong></p>
+            <ul>
+              <li><strong>Minigame points</strong>: shown live throughout.</li>
+              <li><strong>Guess points</strong> (correct Millionaire guesses) &amp; <strong>survival points</strong> (rounds the Millionaire survives) stay hidden until you tap “Reveal all scores”.</li>
+              <li>Scoreboard also shows the final winner who held the Million at the end.</li>
+              <li>Voting history can be reviewed after the game.</li>
+              <li>At the end, you can:
+                <ul>
+                  <li>Start a <strong>new game with the same players</strong> (questionnaires preserved), or</li>
+                  <li><strong>Reset everything</strong> and start from scratch.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SCOREBOARD -->
+        <section id="scoreboardSection" class="card" style="display:none;">
+          <div class="card-header">
+            <h2>Scoreboard</h2>
+          </div>
+          <div class="helper-text">
+            Minigame points are visible now. Guess &amp; survival points unlock at the end.
+          </div>
+          <table style="margin-top:6px;">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Status</th>
+                <th>Minigames</th>
+                <th>Guesses ✓</th>
+                <th>Survival</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="scoreboardBody"></tbody>
+          </table>
+          <div class="btn-row" style="margin-top:8px;">
+            <button id="revealScoresBtn" class="secondary-btn" disabled>Reveal all scores</button>
+          </div>
+        </section>
+
+        <!-- VOTE HISTORY -->
+        <section id="voteHistorySection" class="card" style="display:none;">
+          <div class="card-header">
+            <h2>Voting history</h2>
+          </div>
+          <div id="voteHistoryContent" class="helper-text"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { id: "introExtro", label: "Are you more introverted, ambiverted, or extroverted?", type: "choice", options: ["introverted","ambiverted","extroverted"] },
+      { id: "dayTime", label: "Which do you prefer: mornings, afternoons, or nights?", type: "choice", options: ["mornings","afternoons","nights"] },
+      { id: "vibe", label: "Pick a vibe: chaotic, calm, mysterious, competitive, or wholesome.", type: "choice", options: ["chaotic","calm","mysterious","competitive","wholesome"] },
+      { id: "comfortActivity", label: "What’s your go-to comfort activity?", type: "text" },
+      { id: "fictionalWorld", label: "Which fictional world would you most want to live in?", type: "text" },
+      { id: "location", label: "Choose one: city, beach, forest, mountains, desert, countryside.", type: "choice", options: ["city","beach","forest","mountains","desert","countryside"] },
+      { id: "colour", label: "Pick a colour that best represents you.", type: "text" },
+      { id: "saltySweet", label: "Salty or sweet?", type: "choice", options: ["salty","sweet"] },
+      { id: "spicyTolerance", label: "Spicy tolerance: low, medium, high, or “I want pain.”", type: "choice", options: ["low","medium","high","I want pain"] },
+      { id: "season", label: "Favourite season: summer, winter, spring, or autumn?", type: "choice", options: ["summer","winter","spring","autumn"] },
+      { id: "oneCuisine", label: "If you had to choose only one cuisine for the rest of your life, what would it be?", type: "text" },
+      { id: "coffeeTea", label: "Coffee, tea, or neither?", type: "choice", options: ["coffee","tea","neither"] },
+      { id: "punctual", label: "Are you usually early, on time, or late?", type: "choice", options: ["early","on time","late"] },
+      { id: "planningStyle", label: "Pick one: planner, improviser, or “I pretend to plan but chaos wins.”", type: "choice", options: ["planner","improviser","I pretend to plan but chaos wins"] },
+      { id: "weekendActivity", label: "What’s your ideal weekend activity?", type: "text" },
+      { id: "fashionVibe", label: "Pick one word that describes your fashion vibe: casual, sporty, minimal, colourful, cozy, or edgy.", type: "choice", options: ["casual","sporty","minimal","colourful","cozy","edgy"] },
+      { id: "exerciseFreq", label: "How often do you exercise?", type: "text" },
+      { id: "favouriteWeather", label: "What’s your favourite type of weather?", type: "text" },
+      { id: "personalityAnimal", label: "Which animal matches your personality?", type: "text" },
+      { id: "smell", label: "If you were a smell, what would you be?", type: "text" },
+      { id: "emoji", label: "Which emoji describes you most?", type: "text" },
+      { id: "groupRole", label: "In a group: observing, leading, joking, vibing, or stirring chaos?", type: "choice", options: ["observing","leading","joking","vibing","stirring chaos"] },
+      { id: "stressReaction", label: "What’s your reaction when stressed: silence, overthinking, humour, distraction, or productivity?", type: "choice", options: ["silence","overthinking","humour","distraction","productivity"] },
+      { id: "competitiveness", label: "How competitive are you? (1–5)", type: "choice", options: ["1","2","3","4","5"] },
+      { id: "problemApproach", label: "Which would you rather do: solve a puzzle, talk your way out of something, or outsmart someone?", type: "choice", options: ["solve a puzzle","talk your way out of something","outsmart someone"] },
+      { id: "trusting", label: "How trusting are you of others on first meeting? (1–5)", type: "choice", options: ["1","2","3","4","5"] },
+      { id: "lyingTell", label: "When lying, what gives you away most: voice, eyes, smile, body language, or nothing?", type: "choice", options: ["voice","eyes","smile","body language","nothing"] },
+      { id: "element", label: "Which element do you feel most connected to: fire, water, earth, air, or space?", type: "choice", options: ["fire","water","earth","air","space"] },
+      { id: "decisionStyle", label: "When making decisions, do you rely more on logic, intuition, or emotion?", type: "choice", options: ["logic","intuition","emotion"] },
+      { id: "masterSkill", label: "If you could instantly master one skill, what would it be?", type: "text" }
+    ];
+
+    let players = [];
+    let currentPlayerIndex = 0;
+    let rolesAssigned = false;
+
+    let roundNumber = 0;
+    let currentRound = null;
+    let clueUsed = {};
+    let voteStage = "initial";
+    let tieCandidates = null;
+    let finaleData = null;
+
+    let firstPlacePowerEnabled = false;
+    let keepEliminatedIn = true;
+
+    let revealAllScores = false;
+    let voteHistory = [];
+
+    let voteStageData = null;
+    let revealQueue = [];
+    let revealOutcome = null;
+
+    const stepIndicator = document.getElementById("stepIndicator");
+
+    const playerSetup = document.getElementById("playerSetup");
+    const questionnaireSection = document.getElementById("questionnaireSection");
+    const identitySection = document.getElementById("identitySection");
+    const roundSection = document.getElementById("roundSection");
+    const voteSection = document.getElementById("voteSection");
+    const finaleSection = document.getElementById("finaleSection");
+    const scoreboardSection = document.getElementById("scoreboardSection");
+    const voteHistorySection = document.getElementById("voteHistorySection");
+    const rulesContent = document.getElementById("rulesContent");
+    const toggleRulesBtn = document.getElementById("toggleRulesBtn");
+
+    const playerNameInput = document.getElementById("playerNameInput");
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
+    const startQuestionsBtn = document.getElementById("startQuestionsBtn");
+    const assignRolesBtn = document.getElementById("assignRolesBtn");
+    const startGameBtn = document.getElementById("startGameBtn");
+    const resetGameBtn = document.getElementById("resetGameBtn");
+    const samePlayersBtn = document.getElementById("samePlayersBtn");
+    const firstPlacePowerToggle = document.getElementById("firstPlacePowerToggle");
+    const eliminationModeToggle = document.getElementById("eliminationModeToggle");
+    const globalStatus = document.getElementById("globalStatus");
+    const playersList = document.getElementById("playersList");
+
+    const questionnaireSubtitle = document.getElementById("questionnaireSubtitle");
+    const questionnaireStatus = document.getElementById("questionnaireStatus");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const backToPlayersBtn = document.getElementById("backToPlayersBtn");
+    const saveAnswersBtn = document.getElementById("saveAnswersBtn");
+    const autofillBtn = document.getElementById("autofillBtn");
+
+    const identityGrid = document.getElementById("identityGrid");
+
+    const roundTitle = document.getElementById("roundTitle");
+    const roundPill = document.getElementById("roundPill");
+    const firstPlaceSelect = document.getElementById("firstPlaceSelect");
+    const secondPlaceSelect = document.getElementById("secondPlaceSelect");
+    const thirdPlaceSelect = document.getElementById("thirdPlaceSelect");
+    const lockMinigameBtn = document.getElementById("lockMinigameBtn");
+    const minigameStatus = document.getElementById("minigameStatus");
+    const publicClueText = document.getElementById("publicClueText");
+    const sharedHiddenClueBlock = document.getElementById("sharedHiddenClueBlock");
+    const sharedHiddenClueText = document.getElementById("sharedHiddenClueText");
+    const soloHiddenClueBlock = document.getElementById("soloHiddenClueBlock");
+    const soloHiddenClueText = document.getElementById("soloHiddenClueText");
+    const firstPlacePowerBlock = document.getElementById("firstPlacePowerBlock");
+    const firstPlacePowerChoices = document.getElementById("firstPlacePowerChoices");
+    const proceedToVotingBtn = document.getElementById("proceedToVotingBtn");
+
+    const voteRoundPill = document.getElementById("voteRoundPill");
+    const voteSubtitle = document.getElementById("voteSubtitle");
+    const voteStatusText = document.getElementById("voteStatusText");
+    const voteHint = document.getElementById("voteHint");
+
+    const currentVoterPanel = document.getElementById("currentVoterPanel");
+    const currentVoterName = document.getElementById("currentVoterName");
+    const currentVoterStatus = document.getElementById("currentVoterStatus");
+    const primaryVoteSelect = document.getElementById("primaryVoteSelect");
+    const secondaryVoteSelect = document.getElementById("secondaryVoteSelect");
+    const extraVoteBlock = document.getElementById("extraVoteBlock");
+    const submitVoteBtn = document.getElementById("submitVoteBtn");
+
+    const revealVotesArea = document.getElementById("revealVotesArea");
+    const voteRevealLog = document.getElementById("voteRevealLog");
+    const revealNextVoteBtn = document.getElementById("revealNextVoteBtn");
+
+    const finaleSubtitle = document.getElementById("finaleSubtitle");
+    const finalistsList = document.getElementById("finalistsList");
+    const finalFirstSelect = document.getElementById("finalFirstSelect");
+    const finalSecondSelect = document.getElementById("finalSecondSelect");
+    const finalThirdSelect = document.getElementById("finalThirdSelect");
+    const finaleStatus = document.getElementById("finaleStatus");
+    const boxesContainer = document.getElementById("boxesContainer");
+    const lockFinaleMinigameBtn = document.getElementById("lockFinaleMinigameBtn");
+    const skipSwapBtn = document.getElementById("skipSwapBtn");
+    const revealBoxesBtn = document.getElementById("revealBoxesBtn");
+    const endResetRow = document.getElementById("endResetRow");
+    const endSamePlayersBtn = document.getElementById("endSamePlayersBtn");
+    const endResetBtn = document.getElementById("endResetBtn");
+
+    const scoreboardBody = document.getElementById("scoreboardBody");
+    const revealScoresBtn = document.getElementById("revealScoresBtn");
+    const voteHistoryContent = document.getElementById("voteHistoryContent");
+
+    function ensureScoreProps(p) {
+      if (typeof p.minigamePoints !== "number") p.minigamePoints = 0;
+      if (typeof p.guessPoints !== "number") p.guessPoints = 0;
+      if (typeof p.survivalPoints !== "number") p.survivalPoints = 0;
+      if (typeof p.eliminated !== "boolean") p.eliminated = false;
+      if (typeof p.isFinalWinner !== "boolean") p.isFinalWinner = false;
+      if (!p.role) p.role = "Hunter";
+    }
+
+    function renderPlayers() {
+      playersList.innerHTML = "";
+      players.forEach((p, index) => {
+        const chip = document.createElement("div");
+        chip.className = "player-chip";
+        chip.innerHTML = `
+          <span>${p.name}</span>
+          <span class="remove" data-idx="${index}" title="Remove player">✕</span>
+        `;
+        playersList.appendChild(chip);
+      });
+
+      startQuestionsBtn.disabled = players.length < 2;
+      assignRolesBtn.disabled = !(players.length >= 2 && players.every(p => p.answers));
+      startGameBtn.disabled = !rolesAssigned;
+
+      globalStatus.textContent = players.length === 0
+        ? "Ready to begin. Add players to get started."
+        : `Players added: ${players.map(p => p.name).join(", ")}.`;
+
+      playersList.querySelectorAll(".remove").forEach(el => {
+        el.addEventListener("click", () => {
+          const idx = parseInt(el.getAttribute("data-idx"), 10);
+          players.splice(idx, 1);
+          rolesAssigned = false;
+          startGameBtn.disabled = true;
+          renderPlayers();
+          identitySection.style.display = "none";
+          roundSection.style.display = "none";
+          voteSection.style.display = "none";
+          finaleSection.style.display = "none";
+          scoreboardSection.style.display = "none";
+          voteHistorySection.style.display = "none";
+        });
+      });
+    }
+
+    function createQuestionInputs() {
+      questionsContainer.innerHTML = "";
+      questions.forEach(q => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "question";
+
+        const label = document.createElement("div");
+        label.className = "question-label";
+        label.textContent = q.label;
+        wrapper.appendChild(label);
+
+        if (q.type === "choice") {
+          const group = document.createElement("div");
+          group.className = "choice-group";
+          q.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "choice-btn";
+            btn.dataset.questionId = q.id;
+            btn.dataset.value = opt;
+            btn.textContent = opt;
+            btn.addEventListener("click", () => {
+              group.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("active"));
+              btn.classList.add("active");
+            });
+            group.appendChild(btn);
+          });
+          wrapper.appendChild(group);
+        } else {
+          const input = document.createElement("textarea");
+          input.id = `q_${q.id}`;
+          input.placeholder = "Type your answer…";
+          wrapper.appendChild(input);
+        }
+
+        questionsContainer.appendChild(wrapper);
+      });
+    }
+
+    function loadAnswersForPlayer(index) {
+      const player = players[index];
+      questions.forEach(q => {
+        const existing = player.answers ? player.answers[q.id] : "";
+        if (q.type === "choice") {
+          const buttons = questionsContainer.querySelectorAll(
+            `.choice-btn[data-question-id="${q.id}"]`
+          );
+          buttons.forEach(btn => {
+            btn.classList.toggle("active", !!existing && btn.dataset.value === existing);
+          });
+        } else {
+          const el = document.getElementById(`q_${q.id}`);
+          if (el) el.value = existing || "";
+        }
+      });
+    }
+
+    function saveAnswersForCurrentPlayer() {
+      const current = players[currentPlayerIndex];
+      const answers = {};
+      let allAnswered = true;
+
+      questions.forEach(q => {
+        if (q.type === "choice") {
+          const buttons = questionsContainer.querySelectorAll(
+            `.choice-btn[data-question-id="${q.id}"]`
+          );
+          let selected = "";
+          buttons.forEach(btn => {
+            if (btn.classList.contains("active")) {
+              selected = btn.dataset.value;
+            }
+          });
+          if (!selected) allAnswered = false;
+          answers[q.id] = selected;
+        } else {
+          const el = document.getElementById(`q_${q.id}`);
+          const value = (el?.value || "").trim();
+          if (!value) allAnswered = false;
+          answers[q.id] = value;
+        }
+      });
+
+      if (!allAnswered && !confirm("Some answers are blank. Are you sure you want to save and continue?")) {
+        return false;
+      }
+
+      current.answers = answers;
+      ensureScoreProps(current);
+      return true;
+    }
+
+    function updateQuestionnaireUI() {
+      const total = players.length;
+      const current = players[currentPlayerIndex];
+      questionnaireSubtitle.textContent =
+        `Current player: ${current.name}. Hand them the device and let them answer in private.`;
+      questionnaireStatus.textContent =
+        `Answering questionnaire ${currentPlayerIndex + 1} of ${total} (${current.name})`;
+      stepIndicator.textContent = "Step 2 · Secret questionnaires";
+    }
+
+    function renderIdentities() {
+      identityGrid.innerHTML = "";
+      players.forEach((p, idx) => {
+        const card = document.createElement("div");
+        card.className = "identity-card";
+        card.setAttribute("data-idx", idx);
+
+        card.innerHTML = `
+          <div class="identity-name">${p.name}</div>
+          <div class="identity-role">
+            <span class="role-hidden-text">Tap to reveal your role and your own clues</span>
+            <span class="role-label" style="display:none;">
+              Role:
+              <span class="${p.role === "Millionaire" ? "role-millionaire" : "role-hunter"}">
+                ${p.role === "Millionaire" ? "Millionaire" : "Hunter"}
+              </span>
+            </span>
+          </div>
+          <div class="identity-clues" style="display:none;">
+            ${
+              p.answers
+                ? questions.map(q => {
+                    const val = (p.answers[q.id] || "").trim();
+                    if (!val) return "";
+                    return `<div class="clue-item"><span class="clue-label">${q.label}</span><br>${val}</div>`;
+                  }).filter(Boolean).join("")
+                : "<div class='clue-item'><span class='clue-label'>No clues saved.</span></div>"
+            }
+          </div>
+        `;
+        identityGrid.appendChild(card);
+      });
+
+      identityGrid.querySelectorAll(".identity-card").forEach(card => {
+        card.addEventListener("click", () => {
+          const revealed = card.classList.toggle("revealed");
+          const hiddenText = card.querySelector(".role-hidden-text");
+          const roleLabel = card.querySelector(".role-label");
+          const clues = card.querySelector(".identity-clues");
+
+          if (revealed) {
+            hiddenText.style.display = "none";
+            roleLabel.style.display = "inline";
+            clues.style.display = "block";
+          } else {
+            hiddenText.style.display = "inline";
+            roleLabel.style.display = "none";
+            clues.style.display = "none";
+          }
+        });
+      });
+    }
+
+    function assignRoles() {
+      if (players.length < 2) {
+        alert("You need at least 2 players to assign roles.");
+        return;
+      }
+      const allAnswered = players.every(p => p.answers);
+      if (!allAnswered) {
+        if (!confirm("Not everyone has completed their questionnaire. Assign roles anyway?")) {
+          return;
+        }
+      }
+
+      players.forEach(p => {
+        ensureScoreProps(p);
+        p.role = "Hunter";
+        p.eliminated = false;
+        p.isFinalWinner = false;
+      });
+
+      const idx = Math.floor(Math.random() * players.length);
+      players[idx].role = "Millionaire";
+
+      rolesAssigned = true;
+      assignRolesBtn.disabled = true;
+      startGameBtn.disabled = false;
+
+      renderIdentities();
+      identitySection.style.display = "block";
+      stepIndicator.textContent = "Step 3 · Secret identities";
+      globalStatus.textContent =
+        "Roles assigned. Let each player secretly check their identity, then start the game when ready.";
+    }
+
+    function getCurrentMillionaire() {
+      return players.find(p => p.role === "Millionaire" && !p.eliminated) || null;
+    }
+
+    function activePlayers() {
+      return players.filter(p => !p.eliminated);
+    }
+
+    function populatePlayerSelect(selectEl, includeEliminated = true) {
+      selectEl.innerHTML = '<option value="">— Select player —</option>';
+      players.forEach(p => {
+        if (!includeEliminated && p.eliminated) return;
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.name + (p.eliminated ? " (eliminated)" : "");
+        selectEl.appendChild(opt);
+      });
+    }
+
+    function renderScoreboard() {
+      if (!players.length) {
+        scoreboardSection.style.display = "none";
+        return;
+      }
+      scoreboardSection.style.display = "block";
+      scoreboardBody.innerHTML = "";
+      players.forEach(p => {
+        ensureScoreProps(p);
+        const tr = document.createElement("tr");
+        const statusBadge = p.eliminated
+          ? '<span class="badge-eliminated">Eliminated</span>'
+          : '<span class="badge-active">Active</span>';
+
+        const guessDisplay = revealAllScores ? p.guessPoints : "—";
+        const survivalDisplay = revealAllScores ? p.survivalPoints : "—";
+        const total = revealAllScores
+          ? p.minigamePoints + p.guessPoints + p.survivalPoints
+          : p.minigamePoints;
+
+        tr.innerHTML = `
+          <td class="${p.isFinalWinner ? "winner-highlight" : ""}">
+            ${p.name}${p.isFinalWinner ? " ⭐" : ""}
+          </td>
+          <td>${statusBadge}</td>
+          <td>${p.minigamePoints}</td>
+          <td>${guessDisplay}</td>
+          <td>${survivalDisplay}</td>
+          <td>${total}</td>
+        `;
+        scoreboardBody.appendChild(tr);
+      });
+    }
+
+    function startNewRound() {
+      roundNumber++;
+      voteStage = "initial";
+      tieCandidates = null;
+
+      const currentMill = getCurrentMillionaire();
+      if (!currentMill) {
+        const act = activePlayers();
+        if (act.length) {
+          act.forEach(p => p.role = "Hunter");
+          const idx = Math.floor(Math.random() * act.length);
+          act[idx].role = "Millionaire";
+        }
+      }
+
+      const m = getCurrentMillionaire();
+      currentRound = {
+        number: roundNumber,
+        millionaireIdAtStart: m ? m.id : null,
+        minigame: null,
+        clues: null,
+        firstPlacePowerChoice: null
+      };
+
+      roundTitle.textContent = `Round ${roundNumber} · Minigame & clues`;
+      roundPill.textContent = `Round ${roundNumber}`;
+      voteRoundPill.textContent = `Round ${roundNumber}`;
+      voteSubtitle.textContent = "The Hunt · vote in secret, then reveal.";
+
+      populatePlayerSelect(firstPlaceSelect, keepEliminatedIn);
+      populatePlayerSelect(secondPlaceSelect, keepEliminatedIn);
+      populatePlayerSelect(thirdPlaceSelect, keepEliminatedIn);
+      firstPlaceSelect.disabled = false;
+      secondPlaceSelect.disabled = false;
+      thirdPlaceSelect.disabled = false;
+      lockMinigameBtn.disabled = false;
+      proceedToVotingBtn.disabled = true;
+
+      publicClueText.textContent = "Locked until minigame results are set.";
+      sharedHiddenClueText.textContent =
+        "Hidden. Only 1st/2nd/3rd from the minigame should tap to peek.";
+      sharedHiddenClueText.className = "clue-hidden-text";
+      sharedHiddenClueBlock.dataset.clue = "";
+      if (firstPlacePowerEnabled) {
+        soloHiddenClueText.textContent =
+          "Locked. 1st place must first choose their bonus (extra hidden clue, immunity, or extra vote).";
+      } else {
+        soloHiddenClueText.textContent =
+          "Hidden. Only the 1st place player should tap to peek.";
+      }
+      soloHiddenClueText.className = "clue-hidden-text";
+      soloHiddenClueBlock.dataset.clue = "";
+
+      if (firstPlacePowerBlock) {
+        firstPlacePowerBlock.style.display = "none";
+        firstPlacePowerChoices?.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("active"));
+      }
+
+      roundSection.style.display = "block";
+      voteSection.style.display = "none";
+      finaleSection.style.display = "none";
+      stepIndicator.textContent = `Round ${roundNumber} · Minigame`;
+      globalStatus.textContent =
+        `Round ${roundNumber} started. Run your minigame, enter 1st–3rd, then reveal clues.`;
+
+      scoreboardSection.style.display = "block";
+      renderScoreboard();
+    }
+
+    function pickCluesForCurrentRound() {
+      const m = getCurrentMillionaire();
+      if (!m || !m.answers) {
+        publicClueText.textContent = "No clues available.";
+        return;
+      }
+      const mid = m.id;
+      if (!clueUsed[mid]) clueUsed[mid] = new Set();
+
+      const available = questions
+        .map(q => q.id)
+        .filter(id => {
+          const val = (m.answers[id] || "").trim();
+          return val && !clueUsed[mid].has(id);
+        });
+
+      for (let i = available.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [available[i], available[j]] = [available[j], available[i]];
+      }
+
+      const selected = available.slice(0, 3);
+      selected.forEach(id => clueUsed[mid].add(id));
+
+      const [publicId, sharedId, soloId] = [selected[0], selected[1], selected[2]];
+
+      function makeText(id) {
+        if (!id) return null;
+        const q = questions.find(qq => qq.id === id);
+        const label = q ? q.label : "";
+        const val = (m.answers[id] || "").trim();
+        return label + " — " + val;
+      }
+
+      const publicText = makeText(publicId) || "No unused public clue left.";
+      const sharedText = makeText(sharedId) || "";
+      const soloText = makeText(soloId) || "";
+
+      publicClueText.textContent = publicText;
+      sharedHiddenClueBlock.dataset.clue = sharedText || "";
+      sharedHiddenClueText.textContent = sharedText
+        ? "Hidden. Only 1st/2nd/3rd from the minigame should tap to peek."
+        : "No extra hidden clue available this round.";
+      if (soloText) {
+        soloHiddenClueBlock.dataset.clue = soloText;
+      } else {
+        soloHiddenClueBlock.dataset.clue = "";
+        soloHiddenClueText.textContent = "No extra hidden clue available this round.";
+      }
+
+      if (currentRound) {
+        currentRound.clues = {
+          publicText,
+          sharedText: sharedText || "—",
+          soloText: soloText || "—"
+        };
+      }
+    }
+
+    function votersForStage(stage) {
+      if (!keepEliminatedIn) return activePlayers();
+      if (stage === "revote") return activePlayers();
+      const eliminatedVoters = players.filter(p => p.eliminated);
+      const activeVoters = players.filter(p => !p.eliminated);
+      return eliminatedVoters.concat(activeVoters);
+    }
+
+    function launchConfetti() {
+      const overlay = document.createElement("div");
+      overlay.id = "confettiOverlay";
+      overlay.style.position = "fixed";
+      overlay.style.left = "0";
+      overlay.style.top = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.pointerEvents = "none";
+      overlay.style.overflow = "hidden";
+      overlay.style.zIndex = "9999";
+      document.body.appendChild(overlay);
+
+      for (let i = 0; i < 70; i++) {
+        const span = document.createElement("span");
+        span.textContent = "$";
+        span.style.position = "absolute";
+        span.style.left = Math.random() * 100 + "%";
+        span.style.top = "-10%";
+        span.style.fontSize = 14 + Math.random() * 18 + "px";
+        span.style.color = "#22c55e";
+        span.style.opacity = "0.9";
+        span.style.animation = `confetti-fall ${4 + Math.random() * 3}s linear ${Math.random() * 2}s forwards`;
+        overlay.appendChild(span);
+      }
+
+      setTimeout(() => overlay.remove(), 8500);
+    }
+
+    function autofillAnswersForCurrentPlayer() {
+      const emojiSamples = ["😊","😈","🤡","😎","🥲","🤠","🫠"];
+      questions.forEach(q => {
+        if (q.type === "choice") {
+          const buttons = questionsContainer.querySelectorAll(
+            `.choice-btn[data-question-id="${q.id}"]`
+          );
+          if (!buttons.length) return;
+          const idx = Math.floor(Math.random() * buttons.length);
+          buttons.forEach((btn,i) => {
+            btn.classList.toggle("active", i === idx);
+          });
+        } else {
+          const el = document.getElementById(`q_${q.id}`);
+          if (!el) return;
+          let val = "Test answer";
+          if (q.id === "emoji") {
+            val = emojiSamples[Math.floor(Math.random() * emojiSamples.length)];
+          } else if (q.id === "comfortActivity") {
+            val = "Couch, snacks, and a show";
+          } else if (q.id === "fictionalWorld") {
+            val = "Harry Potter universe";
+          } else if (q.id === "weekendActivity") {
+            val = "Brunch, board games, and a nap";
+          } else if (q.id === "oneCuisine") {
+            val = "Japanese";
+          } else if (q.id === "colour") {
+            val = "Deep green";
+          } else if (q.id === "exerciseFreq") {
+            val = "A few times a week";
+          } else if (q.id === "favouriteWeather") {
+            val = "Cool, cloudy, cozy";
+          } else if (q.id === "personalityAnimal") {
+            val = "Golden retriever energy";
+          } else if (q.id === "smell") {
+            val = "Fresh coffee and rain";
+          } else if (q.id === "masterSkill") {
+            val = "Playing piano flawlessly";
+          }
+          el.value = val;
+        }
+      });
+    }
+
+    function startVoteStage(targetFilterIds = null) {
+      const stage = voteStage;
+      const voters = votersForStage(stage);
+      voteStageData = {
+        stage,
+        voters: voters.map(p => p.id),
+        index: 0,
+        votesByVoter: {},
+        targetFilterIds
+      };
+
+      voteRevealLog.innerHTML = "";
+      revealVotesArea.style.display = "none";
+      revealQueue = [];
+      revealOutcome = null;
+
+      currentVoterPanel.style.display = "block";
+      updateCurrentVoterUI();
+    }
+
+    function updateCurrentVoterUI() {
+      if (!voteStageData) return;
+
+      if (voteStageData.index >= voteStageData.voters.length) {
+        currentVoterPanel.style.display = "none";
+        voteStatusText.textContent = "All votes are in. Get everyone together for the reveal.";
+        voteHint.textContent = "";
+        prepareVoteResolution();
+
+        revealVotesArea.style.display = "block";
+        return;
+      }
+
+      const voterId = voteStageData.voters[voteStageData.index];
+      const voter = players.find(p => p.id === voterId);
+      if (!voter) return;
+
+      currentVoterName.textContent = `Current voter: ${voter.name}`;
+      if (voter.eliminated) {
+        currentVoterStatus.innerHTML =
+          "<strong>You are eliminated.</strong> Your vote will NOT affect who is hunted, but it still earns guess points if you name the Millionaire.";
+      } else {
+        currentVoterStatus.textContent =
+          "You are still in. Vote carefully — you cannot vote for yourself.";
+      }
+
+      const activeTargets = activePlayers();
+      let targets = activeTargets;
+      if (voteStageData.targetFilterIds) {
+        targets = targets.filter(p => voteStageData.targetFilterIds.includes(p.id));
+      }
+      // Never allow self-vote
+      targets = targets.filter(t => t.id !== voterId);
+
+      primaryVoteSelect.innerHTML = '<option value="">— Select target —</option>';
+      targets.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = t.name;
+        primaryVoteSelect.appendChild(opt);
+      });
+
+      secondaryVoteSelect.innerHTML = '<option value="">— Select target —</option>';
+      targets.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = t.name;
+        secondaryVoteSelect.appendChild(opt);
+      });
+
+      const firstId = currentRound?.minigame?.firstId || null;
+      const hasExtra =
+        voteStage === "initial" &&
+        firstPlacePowerEnabled &&
+        currentRound &&
+        currentRound.firstPlacePowerChoice === "extraVote" &&
+        voterId === firstId &&
+        !voter.eliminated;
+
+      extraVoteBlock.style.display = hasExtra ? "block" : "none";
+      secondaryVoteSelect.value = "";
+      primaryVoteSelect.value = "";
+    }
+
+    function prepareVoteResolution() {
+      if (!voteStageData) return;
+
+      const stage = voteStageData.stage;
+      const votesByVoter = voteStageData.votesByVoter;
+      const millionaireNow = getCurrentMillionaire();
+      const millionaireId = millionaireNow ? millionaireNow.id : null;
+
+      let voteMap = {};
+      const allEntriesForReveal = [];
+      const votesForScoring = [];
+
+      let immuneId = null;
+      let extraVoteId = null;
+
+      if (
+        firstPlacePowerEnabled &&
+        currentRound &&
+        currentRound.minigame &&
+        currentRound.firstPlacePowerChoice
+      ) {
+        const firstId = currentRound.minigame.firstId;
+        if (currentRound.firstPlacePowerChoice === "immunity") {
+          immuneId = firstId;
+        } else if (currentRound.firstPlacePowerChoice === "extraVote" && stage === "initial") {
+          extraVoteId = firstId;
+        }
+      }
+
+      Object.entries(votesByVoter).forEach(([voterId, slots]) => {
+        const voter = players.find(p => p.id === voterId);
+        if (!voter) return;
+        const primaryTarget = slots.primary;
+        const secondaryTarget = slots.secondary;
+
+        voteHistory.push({
+          round: currentRound?.number || 0,
+          stage: stage,
+          voterName: voter.name,
+          primary: primaryTarget ? (players.find(p => p.id === primaryTarget)?.name || primaryTarget) : "—",
+          secondary: secondaryTarget ? (players.find(p => p.id === secondaryTarget)?.name || secondaryTarget) : "—"
+        });
+
+        if (stage === "initial" && primaryTarget && millionaireId) {
+          votesForScoring.push({ voter, targetId: primaryTarget });
+        }
+
+        const showInReveal = !voter.eliminated || !keepEliminatedIn;
+
+        if (showInReveal && primaryTarget) {
+          allEntriesForReveal.push({ targetId: primaryTarget, isImmune: immuneId && primaryTarget === immuneId });
+        }
+        if (stage === "initial" && extraVoteId && voterId === extraVoteId && secondaryTarget && showInReveal) {
+          allEntriesForReveal.push({ targetId: secondaryTarget, isImmune: immuneId && secondaryTarget === immuneId });
+        }
+
+        if (!voter.eliminated) {
+          if (primaryTarget) {
+            voteMap[primaryTarget] = (voteMap[primaryTarget] || 0) + 1;
+          }
+          if (stage === "initial" && extraVoteId && voterId === extraVoteId && secondaryTarget) {
+            voteMap[secondaryTarget] = (voteMap[secondaryTarget] || 0) + 1;
+          }
+        }
+      });
+
+      if (stage === "initial" && millionaireId) {
+        votesForScoring.forEach(({ voter, targetId }) => {
+          if (targetId === millionaireId) voter.guessPoints += 1;
+        });
+      }
+
+      const activeList = activePlayers();
+      const allCandidateIds = Object.keys(voteMap).filter(id => voteMap[id] > 0);
+
+      let outcome = {
+        type: "noElimination",
+        eliminatedId: null,
+        revoteCandidates: null,
+        historyMessage: ""
+      };
+
+      if (!allCandidateIds.length) {
+        outcome.type = "noElimination";
+        outcome.historyMessage =
+          "No valid votes cast against active players. No one is eliminated this round.";
+        buildRevealQueue(allEntriesForReveal, null, immuneId);
+        revealOutcome = outcome;
+        return;
+      }
+
+      const immunePlayer = immuneId ? players.find(p => p.id === immuneId) : null;
+      let immuneWasTop = false;
+
+      if (stage === "initial" && immuneId && allCandidateIds.length) {
+        let overallMax = 0;
+        allCandidateIds.forEach(id => {
+          if (voteMap[id] > overallMax) overallMax = voteMap[id];
+        });
+        if (voteMap[immuneId] === overallMax) immuneWasTop = true;
+      }
+
+      if (stage === "initial" && immuneId) {
+        const hasNonImmuneVotes = allCandidateIds.some(id => id !== immuneId);
+        if (!hasNonImmuneVotes) {
+          const remainingIds = activeList.map(p => p.id).filter(id => id !== immuneId);
+          if (!remainingIds.length) {
+            outcome.type = "noElimination";
+            const base = immunePlayer
+              ? `${immunePlayer.name} is immune and received all the votes. No one can be eliminated this round.`
+              : "The immune player received all the votes. No one can be eliminated this round.";
+            outcome.historyMessage = base;
+            buildRevealQueue(allEntriesForReveal, null, immuneId);
+            revealOutcome = outcome;
+            return;
+          }
+          outcome.type = "revote";
+          outcome.revoteCandidates = remainingIds;
+          outcome.historyMessage =
+            (immunePlayer
+              ? `${immunePlayer.name} is immune and received all the votes. Revote among remaining players.`
+              : "The immune player was targeted by all votes. Revote among remaining players.");
+          buildRevealQueue(allEntriesForReveal, null, immuneId);
+          revealOutcome = outcome;
+          return;
+        }
+      }
+
+      let candidateIds = allCandidateIds;
+      if (immuneId) {
+        candidateIds = candidateIds.filter(id => id !== immuneId);
+      }
+
+      if (!candidateIds.length) {
+        outcome.type = "noElimination";
+        outcome.historyMessage =
+          "All votes landed on an immune player and no other candidates remain. No one is eliminated.";
+        buildRevealQueue(allEntriesForReveal, null, immuneId);
+        revealOutcome = outcome;
+        return;
+      }
+
+      let maxVotes = 0;
+      candidateIds.forEach(id => {
+        if (voteMap[id] > maxVotes) maxVotes = voteMap[id];
+      });
+      const topTargets = candidateIds.filter(id => voteMap[id] === maxVotes);
+
+      if (topTargets.length === 1) {
+        outcome.type = "eliminated";
+        outcome.eliminatedId = topTargets[0];
+        const eliminatedPlayer = players.find(p => p.id === outcome.eliminatedId);
+        if (stage === "initial" && immuneId && immuneWasTop && immunePlayer) {
+          outcome.historyMessage =
+            `Immunity twist: ${immunePlayer.name} had the most votes but was immune, so votes against them do not count. The next highest, ${eliminatedPlayer ? eliminatedPlayer.name : "another player"}, is hunted instead.`;
+        } else {
+          outcome.historyMessage =
+            "The vote produced a clear top choice. That player is hunted.";
+        }
+        buildRevealQueue(allEntriesForReveal, outcome.eliminatedId, immuneId);
+        revealOutcome = outcome;
+        return;
+      } else {
+        if (stage === "initial") {
+          outcome.type = "revote";
+          outcome.revoteCandidates = topTargets;
+          if (immuneId && immuneWasTop && immunePlayer) {
+            outcome.historyMessage =
+              `Immunity twist: ${immunePlayer.name} had the most votes but was immune. There is a tie among the next highest players – revote among them.`;
+          } else {
+            outcome.historyMessage =
+              "Tie for the most votes. Those tied plead their case; revote among them.";
+          }
+          buildRevealQueue(allEntriesForReveal, null, immuneId);
+          revealOutcome = outcome;
+          return;
+        } else {
+          const act = activePlayers();
+          const safeIds = topTargets;
+          const candidates = act.filter(p => !safeIds.includes(p.id) && p.id !== immuneId);
+          if (!candidates.length) {
+            outcome.type = "noElimination";
+            outcome.historyMessage =
+              "Second tie in a revote and no other players are eligible to be eliminated. No one is eliminated.";
+            buildRevealQueue(allEntriesForReveal, null, immuneId);
+            revealOutcome = outcome;
+            return;
+          }
+          const pick = candidates[Math.floor(Math.random() * candidates.length)];
+          outcome.type = "eliminated";
+          outcome.eliminatedId = pick.id;
+          outcome.historyMessage =
+            "Second tie in the revote. The tied players are now safe and a random remaining active player is eliminated instead.";
+          buildRevealQueue(allEntriesForReveal, outcome.eliminatedId, immuneId);
+          revealOutcome = outcome;
+          return;
+        }
+      }
+    }
+
+    function buildRevealQueue(entries, eliminatedId, immuneId) {
+      if (!entries.length) {
+        revealQueue = [];
+        announceImmunityIfNeeded(immuneId);
+        return;
+      }
+
+      const immuneEntries = entries.filter(e => e.isImmune);
+      const normalEntries = entries.filter(e => !e.isImmune);
+
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+
+      shuffle(immuneEntries);
+      shuffle(normalEntries);
+
+      let lastElimEntry = null;
+      let others = normalEntries;
+      if (eliminatedId) {
+        const elimIndex = normalEntries.findIndex(e => e.targetId === eliminatedId);
+        if (elimIndex >= 0) {
+          lastElimEntry = normalEntries[elimIndex];
+          others = normalEntries.slice(0, elimIndex).concat(normalEntries.slice(elimIndex + 1));
+        }
+      }
+
+      revealQueue = immuneEntries.concat(others);
+      if (lastElimEntry) {
+        revealQueue.push(lastElimEntry);
+      }
+
+      announceImmunityIfNeeded(immuneId);
+    }
+
+    function announceImmunityIfNeeded(immuneId) {
+      voteRevealLog.innerHTML = "";
+      if (immuneId) {
+        const immunePlayer = players.find(p => p.id === immuneId);
+        if (immunePlayer) {
+          const line = document.createElement("span");
+          line.className = "vote-line";
+          line.textContent = `IMMUNITY: ${immunePlayer.name} is immune this hunt. Votes against them do not count.`;
+          voteRevealLog.appendChild(line);
+          voteRevealLog.appendChild(document.createElement("br"));
+        }
+      }
+    }
+
+    function finalizeElimination(eliminatedId, historyMessage) {
+      const eliminated = players.find(p => p.id === eliminatedId);
+      if (!eliminated) return;
+
+      const wasMillionaire = eliminated.role === "Millionaire";
+      const millionaireAtStart = currentRound?.millionaireIdAtStart || null;
+
+      let msg = historyMessage ? historyMessage + "\n\n" : "";
+
+      eliminated.eliminated = true;
+
+      if (wasMillionaire) {
+        eliminated.role = "Hunter";
+        msg += `${eliminated.name} was the Millionaire and has been eliminated.\n`;
+        const remaining = activePlayers();
+        if (remaining.length) {
+          remaining.forEach(p => p.role = "Hunter");
+          const idx = Math.floor(Math.random() * remaining.length);
+          remaining[idx].role = "Millionaire";
+          msg += "The Million is secretly reassigned to one of the remaining players.\n\nEveryone can now re-check their identities before the next round.";
+          alert(msg);
+
+          renderScoreboard();
+
+          if (activePlayers().length <= 3) {
+            enterFinaleMode();
+          } else {
+            startNewRound();
+            renderIdentities();
+            identitySection.style.display = "block";
+            stepIndicator.textContent = `Round ${roundNumber} · Minigame (roles just changed)`;
+            globalStatus.textContent =
+              "The Millionaire has changed. Let everyone tap their identity card above, then run the next minigame.";
+          }
+          return;
+        } else {
+          msg += "No players remain to hold the Million.";
+          alert(msg);
+          renderScoreboard();
+          return;
+        }
+      } else {
+        msg += `${eliminated.name} was hunted and is NOT the Millionaire.\n`;
+        alert(msg);
+
+        if (millionaireAtStart) {
+          const surv = players.find(p => p.id === millionaireAtStart);
+          if (surv) surv.survivalPoints += 1;
+        }
+
+        renderScoreboard();
+
+        if (activePlayers().length <= 3) {
+          enterFinaleMode();
+        } else {
+          startNewRound();
+        }
+      }
+    }
+
+    function enterFinaleMode() {
+      roundSection.style.display = "none";
+      voteSection.style.display = "none";
+
+      renderIdentities();
+      identitySection.style.display = "block";
+
+      const finalists = activePlayers();
+      finaleSection.style.display = "block";
+      stepIndicator.textContent = "Finale · Check roles & blind box";
+
+      if (!finalists.length) {
+        finaleSubtitle.textContent = "No active players left. Wild game.";
+        finalistsList.textContent = "";
+        lockFinaleMinigameBtn.disabled = true;
+        skipSwapBtn.disabled = true;
+        revealBoxesBtn.disabled = true;
+        return;
+      }
+
+      finaleSubtitle.textContent =
+        "Final 3: let each finalist tap their identity card above to re-check their role in secret.";
+      finalistsList.textContent = "Finalists: " + finalists.map(p => p.name).join(", ");
+
+      const currentMill = getCurrentMillionaire();
+      let millionId = currentMill ? currentMill.id : finalists[0].id;
+
+      finaleData = {
+        finalists,
+        boxMap: {},
+        firstPlayerId: null,
+        secondPlayerId: null,
+        thirdPlayerId: null,
+        firstPlayerName: "",
+        secondPlayerName: "",
+        thirdPlayerName: "",
+        swapStage: "none",
+        selectedForSwap: [],
+        revealed: false
+      };
+
+      finalists.forEach(p => {
+        finaleData.boxMap[p.id] = (p.id === millionId);
+      });
+
+      function populateFinalSelect(sel) {
+        sel.innerHTML = '<option value="">— Select finalist —</option>';
+        finalists.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.name;
+          sel.appendChild(opt);
+        });
+      }
+
+      populateFinalSelect(finalFirstSelect);
+      populateFinalSelect(finalSecondSelect);
+      populateFinalSelect(finalThirdSelect);
+
+      finalFirstSelect.disabled = false;
+      finalSecondSelect.disabled = false;
+      finalThirdSelect.disabled = false;
+      lockFinaleMinigameBtn.disabled = false;
+      skipSwapBtn.disabled = true;
+      revealBoxesBtn.disabled = true;
+      boxesContainer.innerHTML = "";
+      finaleStatus.textContent =
+        "After roles are checked, play a minigame to decide 1st/2nd/3rd. That order will control the box swaps.";
+
+      globalStatus.textContent =
+        "Finale time. Once finalists know their roles again, lock in the final minigame order, then run the swaps.";
+    }
+
+    function renderFinalBoxes() {
+      if (!finaleData) return;
+      const finalists = finaleData.finalists;
+      boxesContainer.innerHTML = "";
+      finalists.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "identity-card";
+        card.setAttribute("data-player-id", p.id);
+        if (finaleData.swapStage === "done" && finaleData.revealed && finaleData.boxMap[p.id]) {
+          card.classList.add("winner-box");
+        }
+
+        card.innerHTML = `
+          <div class="identity-name">${p.name}</div>
+          <div class="card-subtitle">Final box</div>
+          <div style="font-size:2rem; margin-top:4px;">📦</div>
+        `;
+
+        if (finaleData.swapStage === "second" || finaleData.swapStage === "first") {
+          card.addEventListener("click", () => handleBoxClick(p.id, card));
+        }
+
+        boxesContainer.appendChild(card);
+      });
+    }
+
+    function handleBoxClick(playerId, card) {
+      if (!finaleData) return;
+      if (finaleData.swapStage !== "second" && finaleData.swapStage !== "first") return;
+
+      const idx = finaleData.selectedForSwap.indexOf(playerId);
+      if (idx >= 0) {
+        finaleData.selectedForSwap.splice(idx, 1);
+        card.classList.remove("revealed");
+      } else {
+        if (finaleData.selectedForSwap.length >= 2) return;
+        finaleData.selectedForSwap.push(playerId);
+        card.classList.add("revealed");
+      }
+
+      if (finaleData.selectedForSwap.length === 2) {
+        const [a, b] = finaleData.selectedForSwap;
+        const tmp = finaleData.boxMap[a];
+        finaleData.boxMap[a] = finaleData.boxMap[b];
+        finaleData.boxMap[b] = tmp;
+
+        finaleData.selectedForSwap = [];
+        boxesContainer.querySelectorAll(".identity-card").forEach(c => c.classList.remove("revealed"));
+
+        if (finaleData.swapStage === "second") {
+          finaleData.swapStage = "first";
+          finaleStatus.textContent =
+            `${finaleData.secondPlayerName}'s swap stage is complete. Now ${finaleData.firstPlayerName} (1st place) may secretly swap any two boxes (or choose not to).`;
+        } else if (finaleData.swapStage === "first") {
+          finaleData.swapStage = "done";
+          finaleStatus.textContent =
+            "All swap stages are complete. When ready, tap 'Reveal boxes & end game' to see who kept the Million.";
+          revealBoxesBtn.disabled = false;
+          skipSwapBtn.disabled = true;
+        }
+
+        renderFinalBoxes();
+      }
+    }
+
+    function buildVoteHistoryView() {
+      if (!voteHistory.length) {
+        voteHistorySection.style.display = "none";
+        return;
+      }
+      voteHistorySection.style.display = "block";
+      const grouped = {};
+      voteHistory.forEach(v => {
+        const key = `Round ${v.round}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(v);
+      });
+
+      let html = "";
+      Object.keys(grouped).forEach(roundKey => {
+        html += `<div style="margin-bottom:8px;"><strong>${roundKey}</strong><br>`;
+        const entries = grouped[roundKey];
+        entries.forEach(e => {
+          html += `<span>• [${e.stage}] ${e.voterName} → ${e.primary}`;
+          if (e.secondary && e.secondary !== "—") {
+            html += ` (extra: ${e.secondary})`;
+          }
+          html += `</span><br>`;
+        });
+        html += `</div>`;
+      });
+      voteHistoryContent.innerHTML = html;
+    }
+
+    addPlayerBtn.addEventListener("click", () => {
+      const name = playerNameInput.value.trim();
+      if (!name) return;
+      players.push({
+        id: Date.now().toString() + Math.random().toString(36).slice(2),
+        name,
+        answers: null,
+        role: "Hunter",
+        eliminated: false,
+        minigamePoints: 0,
+        guessPoints: 0,
+        survivalPoints: 0,
+        isFinalWinner: false
+      });
+      playerNameInput.value = "";
+      renderPlayers();
+    });
+
+    playerNameInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        addPlayerBtn.click();
+      }
+    });
+
+    startQuestionsBtn.addEventListener("click", () => {
+      if (players.length < 2) {
+        alert("You need at least 2 players.");
+        return;
+      }
+      playerSetup.style.display = "none";
+      questionnaireSection.style.display = "block";
+      createQuestionInputs();
+      currentPlayerIndex = 0;
+      loadAnswersForPlayer(currentPlayerIndex);
+      updateQuestionnaireUI();
+      globalStatus.textContent = "Working through secret questionnaires. Pass the device between players.";
+    });
+
+    backToPlayersBtn.addEventListener("click", () => {
+      questionnaireSection.style.display = "none";
+      playerSetup.style.display = "block";
+      stepIndicator.textContent = "Step 1 · Add players";
+      globalStatus.textContent = "Back to player setup.";
+    });
+
+    saveAnswersBtn.addEventListener("click", () => {
+      const ok = saveAnswersForCurrentPlayer();
+      if (!ok) return;
+
+      if (currentPlayerIndex < players.length - 1) {
+        currentPlayerIndex++;
+        loadAnswersForPlayer(currentPlayerIndex);
+        updateQuestionnaireUI();
+      } else {
+        questionnaireSection.style.display = "none";
+        playerSetup.style.display = "block";
+        stepIndicator.textContent = "Step 1 · Add players / review";
+        globalStatus.textContent =
+          "All questionnaires saved. You can now assign roles and start the game.";
+        renderPlayers();
+      }
+    });
+
+    autofillBtn.addEventListener("click", () => {
+      autofillAnswersForCurrentPlayer();
+    });
+
+    assignRolesBtn.addEventListener("click", assignRoles);
+
+    startGameBtn.addEventListener("click", () => {
+      if (!rolesAssigned) {
+        alert("Assign roles first.");
+        return;
+      }
+      firstPlacePowerEnabled = !!firstPlacePowerToggle?.checked;
+      keepEliminatedIn = !eliminationModeToggle || eliminationModeToggle.checked;
+
+      playerSetup.style.display = "none";
+      questionnaireSection.style.display = "none";
+      identitySection.style.display = "none";
+      roundNumber = 0;
+      currentRound = null;
+      clueUsed = {};
+      voteHistory = [];
+      revealAllScores = false;
+      finaleData = null;
+      endResetRow.style.display = "none";
+
+      players.forEach(p => {
+        ensureScoreProps(p);
+        p.minigamePoints = 0;
+        p.guessPoints = 0;
+        p.survivalPoints = 0;
+        p.eliminated = false;
+        p.isFinalWinner = false;
+      });
+
+      scoreboardSection.style.display = "block";
+      voteHistorySection.style.display = "none";
+      revealScoresBtn.disabled = true;
+      revealScoresBtn.textContent = "Reveal all scores";
+
+      startNewRound();
+    });
+
+    resetGameBtn.addEventListener("click", () => {
+      if (!confirm("Reset everything and clear players & questionnaires?")) return;
+      players = [];
+      currentPlayerIndex = 0;
+      rolesAssigned = false;
+      roundNumber = 0;
+      currentRound = null;
+      clueUsed = {};
+      voteHistory = [];
+      revealAllScores = false;
+      finaleData = null;
+
+      playerSetup.style.display = "block";
+      questionnaireSection.style.display = "none";
+      identitySection.style.display = "none";
+      roundSection.style.display = "none";
+      voteSection.style.display = "none";
+      finaleSection.style.display = "none";
+      scoreboardSection.style.display = "none";
+      voteHistorySection.style.display = "none";
+      endResetRow.style.display = "none";
+
+      questionsContainer.innerHTML = "";
+      renderPlayers();
+      stepIndicator.textContent = "Step 1 · Add players";
+      globalStatus.textContent = "Game reset. Add players to begin.";
+      revealScoresBtn.disabled = true;
+      revealScoresBtn.textContent = "Reveal all scores";
+    });
+
+    samePlayersBtn.addEventListener("click", () => {
+      if (!players.length) {
+        alert("No players to reuse yet.");
+        return;
+      }
+      if (!confirm("Start a new game with the same players and questionnaires? Scores and roles will reset.")) return;
+
+      roundNumber = 0;
+      currentRound = null;
+      clueUsed = {};
+      voteHistory = [];
+      revealAllScores = false;
+      finaleData = null;
+      endResetRow.style.display = "none";
+
+      players.forEach(p => {
+        ensureScoreProps(p);
+        p.minigamePoints = 0;
+        p.guessPoints = 0;
+        p.survivalPoints = 0;
+        p.eliminated = false;
+        p.role = "Hunter";
+        p.isFinalWinner = false;
+      });
+
+      rolesAssigned = false;
+      startGameBtn.disabled = true;
+      assignRolesBtn.disabled = false;
+
+      playerSetup.style.display = "block";
+      questionnaireSection.style.display = "none";
+      identitySection.style.display = "none";
+      roundSection.style.display = "none";
+      voteSection.style.display = "none";
+      finaleSection.style.display = "none";
+      scoreboardSection.style.display = "none";
+      voteHistorySection.style.display = "none";
+
+      stepIndicator.textContent = "Step 1 · Add players / assign roles";
+      globalStatus.textContent =
+        "New game started with the same players and questionnaires. Assign roles again, then start.";
+      renderPlayers();
+      revealScoresBtn.disabled = true;
+      revealScoresBtn.textContent = "Reveal all scores";
+    });
+
+    lockMinigameBtn.addEventListener("click", () => {
+      const firstId = firstPlaceSelect.value;
+      const secondId = secondPlaceSelect.value;
+      const thirdId = thirdPlaceSelect.value;
+
+      if (!firstId || !secondId || !thirdId) {
+        alert("Select 1st, 2nd and 3rd place.");
+        return;
+      }
+      if (firstId === secondId || firstId === thirdId || secondId === thirdId) {
+        alert("1st, 2nd, 3rd must be three different players.");
+        return;
+      }
+
+      const first = players.find(p => p.id === firstId);
+      const second = players.find(p => p.id === secondId);
+      const third = players.find(p => p.id === thirdId);
+      ensureScoreProps(first);
+      ensureScoreProps(second);
+      ensureScoreProps(third);
+
+      first.minigamePoints += 3;
+      second.minigamePoints += 2;
+      third.minigamePoints += 1;
+
+      if (currentRound) {
+        currentRound.minigame = { firstId, secondId, thirdId };
+        currentRound.firstPlacePowerChoice = null;
+      }
+
+      firstPlaceSelect.disabled = true;
+      secondPlaceSelect.disabled = true;
+      thirdPlaceSelect.disabled = true;
+      lockMinigameBtn.disabled = true;
+      proceedToVotingBtn.disabled = false;
+
+      minigameStatus.textContent =
+        `Minigame points: ${first.name} +3, ${second.name} +2, ${third.name} +1. Clues revealed below.`;
+
+      pickCluesForCurrentRound();
+
+      if (firstPlacePowerEnabled && currentRound) {
+        const firstPlayer = players.find(p => p.id === firstId);
+        if (firstPlayer && !firstPlayer.eliminated) {
+          firstPlacePowerBlock.style.display = "block";
+          firstPlacePowerChoices.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("active"));
+          soloHiddenClueText.textContent =
+            "Locked. 1st place must first choose their bonus (extra hidden clue, immunity, or extra vote).";
+          soloHiddenClueText.className = "clue-hidden-text";
+        }
+      } else {
+        firstPlacePowerBlock.style.display = "none";
+      }
+
+      renderScoreboard();
+    });
+
+    sharedHiddenClueBlock.addEventListener("click", () => {
+      const clue = sharedHiddenClueBlock.dataset.clue || "";
+      if (!clue) return;
+      const isHidden = sharedHiddenClueText.className === "clue-hidden-text";
+      if (isHidden) {
+        sharedHiddenClueText.textContent = clue;
+        sharedHiddenClueText.className = "clue-visible";
+      } else {
+        sharedHiddenClueText.textContent =
+          "Hidden. Only 1st/2nd/3rd from the minigame should tap to peek.";
+        sharedHiddenClueText.className = "clue-hidden-text";
+      }
+    });
+
+    soloHiddenClueBlock.addEventListener("click", () => {
+      const clue = soloHiddenClueBlock.dataset.clue || "";
+      if (!clue) return;
+
+      if (firstPlacePowerEnabled) {
+        if (!currentRound || !currentRound.firstPlacePowerChoice) {
+          alert("1st place must choose their bonus (extra hidden clue, immunity, or extra vote) before this clue can be used.");
+          return;
+        }
+        if (currentRound.firstPlacePowerChoice !== "clue") {
+          alert("1st place chose a different bonus this round, so the extra hidden clue is locked.");
+          return;
+        }
+      }
+
+      const isHidden = soloHiddenClueText.className === "clue-hidden-text";
+      if (isHidden) {
+        soloHiddenClueText.textContent = clue;
+        soloHiddenClueText.className = "clue-visible";
+      } else {
+        soloHiddenClueText.textContent =
+          firstPlacePowerEnabled
+            ? "Locked. 1st place must first choose their bonus (extra hidden clue, immunity, or extra vote)."
+            : "Hidden. Only the 1st place player should tap to peek.";
+        soloHiddenClueText.className = "clue-hidden-text";
+      }
+    });
+
+    if (firstPlacePowerChoices) {
+      firstPlacePowerChoices.addEventListener("click", e => {
+        const btn = e.target.closest(".choice-btn");
+        if (!btn || !currentRound) return;
+        const power = btn.dataset.power;
+        if (!power) return;
+        if (currentRound.firstPlacePowerChoice && currentRound.firstPlacePowerChoice !== power) {
+          return;
+        }
+        currentRound.firstPlacePowerChoice = power;
+        firstPlacePowerChoices.querySelectorAll(".choice-btn").forEach(b => {
+          b.classList.toggle("active", b === btn);
+        });
+        firstPlacePowerBlock.style.display = "none";
+      });
+    }
+
+    proceedToVotingBtn.addEventListener("click", () => {
+      voteStage = "initial";
+      tieCandidates = null;
+      voteSection.style.display = "block";
+      roundSection.style.display = "none";
+      identitySection.style.display = "none";
+
+      voteStatusText.textContent =
+        "Each player will now vote in secret. Eliminated players vote first. You cannot vote for yourself.";
+      voteHint.textContent =
+        "Eliminated votes do not affect who is hunted, but they still earn guess points. After all votes are in, they’ll be revealed dramatically.";
+
+      stepIndicator.textContent = `Round ${roundNumber} · The Hunt`;
+      globalStatus.textContent =
+        "Run the private voting sequence, then reveal the votes together.";
+
+      startVoteStage(null);
+    });
+
+    submitVoteBtn.addEventListener("click", () => {
+      if (!voteStageData) return;
+
+      const voterId = voteStageData.voters[voteStageData.index];
+      const voter = players.find(p => p.id === voterId);
+      if (!voter) return;
+
+      const primary = primaryVoteSelect.value;
+      const secondary =
+        extraVoteBlock.style.display === "block" ? secondaryVoteSelect.value : "";
+
+      if (!primary && !secondary) {
+        alert("Pick at least one target (primary vote) before submitting.");
+        return;
+      }
+
+      voteStageData.votesByVoter[voterId] = { primary, secondary };
+      voteStageData.index += 1;
+      updateCurrentVoterUI();
+    });
+
+    revealNextVoteBtn.addEventListener("click", () => {
+      if (!revealQueue.length) {
+        if (!revealOutcome) return;
+
+        if (revealOutcome.type === "noElimination") {
+          alert(revealOutcome.historyMessage + "\n\nThe Millionaire survives and scores 1 survival point.");
+          if (currentRound?.millionaireIdAtStart) {
+            const surv = players.find(p => p.id === currentRound.millionaireIdAtStart);
+            if (surv) surv.survivalPoints += 1;
+          }
+          renderScoreboard();
+          startNewRound();
+          return;
+        }
+
+        if (revealOutcome.type === "revote") {
+          alert(revealOutcome.historyMessage);
+          voteStage = "revote";
+          tieCandidates = revealOutcome.revoteCandidates;
+          voteStatusText.textContent =
+            "Revote between tied / remaining players only. Still vote in secret.";
+          voteHint.textContent =
+            "Correct-guess points were already locked in from the first vote. This revote is only to decide who is hunted.";
+          revealVotesArea.style.display = "none";
+          voteRevealLog.innerHTML = "";
+          startVoteStage(tieCandidates);
+          return;
+        }
+
+        if (revealOutcome.type === "eliminated") {
+          finalizeElimination(revealOutcome.eliminatedId, revealOutcome.historyMessage);
+          return;
+        }
+
+        return;
+      }
+
+      const entry = revealQueue.shift();
+      const target = players.find(p => p.id === entry.targetId);
+      const name = target ? target.name : "Unknown";
+
+      let text = name;
+      if (entry.isImmune) {
+        text += " (does not count)";
+      }
+
+      if (revealQueue.length === 0) {
+        const line = document.createElement("span");
+        line.className = "vote-line last-line";
+        line.textContent = `Final vote: ${text}`;
+        voteRevealLog.appendChild(line);
+      } else if (revealQueue.length === 1) {
+        const line = document.createElement("span");
+        line.className = "vote-line";
+        line.textContent = text;
+        voteRevealLog.appendChild(line);
+
+        const suspense = document.createElement("span");
+        suspense.className = "vote-line";
+        suspense.textContent = "…one vote left.";
+        voteRevealLog.appendChild(suspense);
+      } else {
+        const line = document.createElement("span");
+        line.className = "vote-line";
+        line.textContent = text;
+        voteRevealLog.appendChild(line);
+      }
+
+      voteRevealLog.scrollTop = voteRevealLog.scrollHeight;
+    });
+
+    lockFinaleMinigameBtn.addEventListener("click", () => {
+      const firstId = finalFirstSelect.value;
+      const secondId = finalSecondSelect.value;
+      const thirdId = finalThirdSelect.value;
+
+      if (!firstId || !secondId || !thirdId) {
+        alert("Select 1st, 2nd and 3rd place for the finale minigame.");
+        return;
+      }
+      if (firstId === secondId || firstId === thirdId || secondId === thirdId) {
+        alert("1st, 2nd, 3rd must be three different finalists.");
+        return;
+      }
+
+      const first = players.find(p => p.id === firstId);
+      const second = players.find(p => p.id === secondId);
+      const third = players.find(p => p.id === thirdId);
+
+      finalFirstSelect.disabled = true;
+      finalSecondSelect.disabled = true;
+      finalThirdSelect.disabled = true;
+      lockFinaleMinigameBtn.disabled = true;
+
+      if (finaleData) {
+        finaleData.firstPlayerId = firstId;
+        finaleData.secondPlayerId = secondId;
+        finaleData.thirdPlayerId = thirdId;
+        finaleData.firstPlayerName = first.name;
+        finaleData.secondPlayerName = second.name;
+        finaleData.thirdPlayerName = third.name;
+        finaleData.swapStage = "second";
+        finaleData.selectedForSwap = [];
+      }
+
+      finaleStatus.textContent =
+        `Final minigame order locked: 1st – ${first.name}, 2nd – ${second.name}, 3rd – ${third.name}. ${second.name} (2nd place) now secretly controls the first swap between any two boxes (or may choose not to).`;
+      skipSwapBtn.disabled = false;
+      revealBoxesBtn.disabled = true;
+      renderFinalBoxes();
+    });
+
+    skipSwapBtn.addEventListener("click", () => {
+      if (!finaleData) return;
+
+      if (finaleData.swapStage === "second") {
+        finaleData.swapStage = "first";
+        finaleData.selectedForSwap = [];
+        finaleStatus.textContent =
+          `${finaleData.secondPlayerName}'s swap stage is complete. Now ${finaleData.firstPlayerName} (1st place) may secretly swap any two boxes (or choose not to).`;
+        renderFinalBoxes();
+      } else if (finaleData.swapStage === "first") {
+        finaleData.swapStage = "done";
+        finaleData.selectedForSwap = [];
+        finaleStatus.textContent =
+          "All swap stages are complete. When ready, tap 'Reveal boxes & end game' to see who kept the Million.";
+        skipSwapBtn.disabled = true;
+        revealBoxesBtn.disabled = false;
+        renderFinalBoxes();
+      }
+    });
+
+    revealBoxesBtn.addEventListener("click", () => {
+      if (!finaleData) return;
+
+      let winnerId = null;
+      Object.keys(finaleData.boxMap).forEach(pid => {
+        if (finaleData.boxMap[pid]) winnerId = pid;
+      });
+      if (!winnerId && finaleData.finalists.length) {
+        winnerId = finaleData.finalists[0].id;
+      }
+
+      players.forEach(p => {
+        p.isFinalWinner = (p.id === winnerId);
+      });
+
+      finaleData.revealed = true;
+      finaleData.swapStage = "done";
+      revealBoxesBtn.disabled = true;
+      skipSwapBtn.disabled = true;
+      renderFinalBoxes();
+
+      const winner = players.find(p => p.id === winnerId);
+      finaleStatus.textContent = winner
+        ? `${winner.name} ends up with the Million!`
+        : "The Million has been revealed.";
+
+      launchConfetti();
+      renderScoreboard();
+      revealScoresBtn.disabled = false;
+      buildVoteHistoryView();
+      globalStatus.textContent =
+        "Game complete. Reveal all scores and scroll the voting history to relive the chaos.";
+      endResetRow.style.display = "flex";
+    });
+
+    revealScoresBtn.addEventListener("click", () => {
+      revealAllScores = true;
+      revealScoresBtn.disabled = true;
+      revealScoresBtn.textContent = "Scores revealed";
+      renderScoreboard();
+    });
+
+    endSamePlayersBtn.addEventListener("click", () => {
+      samePlayersBtn.click();
+    });
+
+    endResetBtn.addEventListener("click", () => {
+      resetGameBtn.click();
+    });
+
+    toggleRulesBtn.addEventListener("click", () => {
+      const showing = rulesContent.style.display !== "none";
+      rulesContent.style.display = showing ? "none" : "block";
+      toggleRulesBtn.textContent = showing ? "Show rules" : "Hide rules";
+    });
+
+    renderPlayers();
+  </script>
+</body>
+</html>
